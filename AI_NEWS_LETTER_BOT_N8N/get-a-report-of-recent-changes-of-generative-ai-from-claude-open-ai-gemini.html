@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>get a report of recent changes of generative ai from claude open ai gemini | Interactive Report</title>
+    
+    <!-- Google Fonts for better typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Header Section */
+        .report-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .report-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .report-header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .report-header .meta {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+        }
+        
+        .report-header .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            font-size: 0.9rem;
+        }
+        
+        .report-header .meta-item i {
+            font-size: 1rem;
+        }
+        
+        /* Content Area */
+        .report-content {
+            padding: 2.5rem;
+            background: white;
+        }
+        
+        /* Modern Table Styling */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        table:hover {
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #edf2f7;
+            color: #4a5568;
+            transition: all 0.3s ease;
+        }
+        
+        /* Zebra striping with gradient */
+        tbody tr:nth-child(odd) {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
+        
+        tbody tr:nth-child(even) {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+        }
+        
+        /* Hover effects for rows */
+        tbody tr:hover {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            cursor: pointer;
+        }
+        
+        /* Hover effects for cells */
+        td:hover {
+            background: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+            color: #4c51bf;
+        }
+        
+        /* Column-specific hover (enhanced) */
+        td:nth-child(1):hover {
+            background: linear-gradient(135deg, #ffe5e5, #ffb8b8);
+        }
+        
+        td:nth-child(2):hover {
+            background: linear-gradient(135deg, #e5ffe5, #b8ffb8);
+        }
+        
+        td:nth-child(3):hover {
+            background: linear-gradient(135deg, #e5e5ff, #b8b8ff);
+        }
+        
+        td:nth-child(4):hover {
+            background: linear-gradient(135deg, #fff0e5, #ffd8b8);
+        }
+        
+        /* Smooth transitions for all interactive elements */
+        th, td, tr, .card, button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Card styling for sections */
+        .section-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover {
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+            border-color: #667eea;
+        }
+        
+        .section-card h2 {
+            font-family: 'Poppins', sans-serif;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        
+        /* List styling */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        li {
+            margin: 0.75rem 0;
+            padding: 0.5rem 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        li:hover {
+            transform: translateX(5px);
+            background: #e0e7ff;
+            border-left-color: #764ba2;
+        }
+        
+        /* Link styling */
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+        
+        a:hover {
+            color: #764ba2;
+        }
+        
+        a:hover::after {
+            width: 100%;
+        }
+        
+        /* Badge styling */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            color: #2d3748;
+            transition: all 0.3s ease;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+            color: #22543d;
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, #feebc8, #fbd38d);
+            color: #744210;
+        }
+        
+        .badge-info {
+            background: linear-gradient(135deg, #bee3f8, #90cdf4);
+            color: #1a365d;
+        }
+        
+        .badge:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+        
+        /* Footer */
+        .report-footer {
+            background: #f8fafc;
+            padding: 1.5rem 2.5rem;
+            text-align: center;
+            border-top: 1px solid #edf2f7;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .report-footer i {
+            color: #667eea;
+            margin: 0 0.25rem;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 12px;
+            }
+            
+            .report-header {
+                padding: 1.5rem;
+            }
+            
+            .report-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .report-header .meta {
+                gap: 1rem;
+            }
+            
+            .report-content {
+                padding: 1.5rem;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            th, td {
+                min-width: 120px;
+            }
+        }
+        
+        /* Animation for content load */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 0.5rem 0;
+        }
+        
+        .stat-card .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <header class="report-header">
+            <h1><i class="fas fa-chart-line" style="margin-right: 1rem;"></i>get a report of recent changes of generative ai from claude open ai gemini</h1>
+            <div class="meta">
+                <span class="meta-item">
+                    <i class="far fa-calendar-alt"></i> February 23, 2026
+                </span>
+                <span class="meta-item">
+                    <i class="far fa-clock"></i> 6:08:14 AM
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-chart-pie"></i> Interactive Report
+                </span>
+            </div>
+        </header>
+        
+        <div class="report-content">
+            <!-- Insert the processed content with enhanced styling -->
+            
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <header class="bg-blue-600 text-white text-center py-6">
+            <h1 class="text-3xl font-bold">Search Report: Recent Changes in Generative AI</h1>
+        </header>
+        <div class="p-6">
+            <h2 class="text-xl font-semibold mb-4">Key Findings</h2>
+            <p class="mb-4">This report summarizes the latest developments in Generative AI focusing on Claude and Gemini. Recent updates reveal significant advancements in AI capabilities and user interactions.</p>
+            <h2 class="text-xl font-semibold mb-2">Top Results</h2>
+            <ul class="space-y-4">
+                <li class="bg-gray-50 p-4 rounded-lg shadow">
+                    <strong>This week in AI updates: Claude Sonnet 4.6, Gemini 3.1 ...</strong>
+                    <p>Anthropic releases Claude Sonnet 4.6. Claude Sonnet 4.6 features improved skills in coding, computer use, long-context reasoning...</p>
+                    <a href="https://sdtimes.com/ai/this-week-in-ai-updates-claude-sonnet-4-6-gemini-3-1-pro-and-more-february-20-2026/" target="_blank" class="text-blue-600 hover:underline">Read more</a>
+                </li>
+                <li class="bg-gray-50 p-4 rounded-lg shadow">
+                    <strong>7 Key Findings from the New Anthropic Economic Index Report</strong>
+                    <p>The report analyzed millions of interactions with Claude and found a significant shift toward augmentation, with 52% of users now working with...</p>
+                    <a href="https://dcthemedian.substack.com/p/7-key-findings-from-the-new-anthropic" target="_blank" class="text-blue-600 hover:underline">Read more</a>
+                </li>
+                <li class="bg-gray-50 p-4 rounded-lg shadow">
+                    <strong>A Review of Generative AI</strong>
+                    <p>The single biggest change that's occurred in the last two years has been the introduction of several new models: Claude, Gemini, Cursor, and...</p>
+                    <a href="https://medium.com/@woody1193/a-review-of-generative-ai-85ae87209c68" target="_blank" class="text-blue-600 hover:underline">Read more</a>
+                </li>
+                <li class="bg-gray-50 p-4 rounded-lg shadow">
+                    <strong>Anthropic's Claude AI has snatched headlines recently. But ...</strong>
+                    <p>Observations indicated that Claude prioritizes safety more rigorously than Gemini, with instances where Claude refused to answer unsafe prompts...</p>
+                    <a href="https://www.facebook.com/techinsider/posts/anthropics-claude-ai-has-snatched-headlines-recently-but-is-there-another-model-/1280691147263692/" target="_blank" class="text-blue-600 hover:underline">Read more</a>
+                </li>
+                <li class="bg-gray-50 p-4 rounded-lg shadow">
+                    <strong>Anthropic's Claude models | Generative AI on Vertex AI</strong>
+                    <p>The following models are available from Anthropic to use in Vertex AI. To access a Claude model, go to its Model Garden model card.</p>
+                    <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/partner-models/claude" target="_blank" class="text-blue-600 hover:underline">Read more</a>
+                </li>
+                <li class="bg-gray-50 p-4 rounded-lg shadow">
+                    <strong>Gemini 3.1: Features, Benchmarks, Hands-On Tests, and ...</strong>
+                    <p>Gemini 3.1 Pro doubles reasoning performance with 77.1% on ARC-AGI-2. Explore features, benchmarks, tests, and how it compares to Claude...</p>
+                    <a href="https://www.datacamp.com/blog/gemini-3-1" target="_blank" class="text-blue-600 hover:underline">Read more</a>
+                </li>
+                <li class="bg-gray-50 p-4 rounded-lg shadow">
+                    <strong>This Update Changes Claude Forever & More AI News You ...</strong>
+                    <p>We have Claude integrating new elements like interactive recipes and maps into the native interface.</p>
+                    <a href="https://www.youtube.com/watch?v=aU5jApm8fWU" target="_blank" class="text-blue-600 hover:underline">Watch video</a>
+                </li>
+                <li class="bg-gray-50 p-4 rounded-lg shadow">
+                    <strong>Anthropic Economic Index report: Uneven geographic and ...</strong>
+                    <p>In the first chapter of this report, we identify notable changes in usage on Claude.ai over the previous eight months, occurring alongside...</p>
+                    <a href="https://www.anthropic.com/research/anthropic-economic-index-september-2025-report" target="_blank" class="text-blue-600 hover:underline">Read more</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+        </div>
+        
+        <footer class="report-footer">
+            <p>
+                <i class="fas fa-bolt"></i> Generated with n8n automation 
+                <i class="fas fa-heart" style="color: #f56565;"></i> | 
+                <i class="fas fa-code-branch"></i> Version 2.0 |
+                <i class="fas fa-database"></i> Data powered by SerpAPI & OpenAI
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
