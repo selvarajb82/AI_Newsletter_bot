@@ -18,6 +18,10 @@ Smart Filtering: Prevents infinite loops by ignoring bot messages
 
 Slack Notifications: Get shareable links directly in your channel
 
+# 📧 Gmail Integration for HTML Report Automation
+
+This document covers the Gmail integration part of your Slack-to-Google-Drive HTML report automation workflow.
+
 📋 Prerequisites
 n8n instance (self-hosted or cloud)
 
@@ -28,6 +32,8 @@ SerpAPI API key
 OpenAI API key
 
 Google Drive account
+
+gmail account
 
 🔧 Installation
 1. Create a Slack App
@@ -88,6 +94,9 @@ Google Drive Upload
 Link Generator (Create Shareable Links)
     ↓
 Slack Notification (Post Links)
+    ↓
+gmail
+    
 💻 Code Components
 1. Bot Filter (After Slack Trigger)
 javascript
