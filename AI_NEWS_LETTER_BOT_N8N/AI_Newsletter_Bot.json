@@ -17,8 +17,8 @@
       "type": "n8n-nodes-base.slackTrigger",
       "typeVersion": 1,
       "position": [
-        -928,
-        -80
+        -960,
+        -208
       ],
       "id": "53f36b55-0a5e-439c-96dc-09f5110f2a03",
       "name": "Slack Trigger",
@@ -59,8 +59,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -352,
-        -80
+        -384,
+        -208
       ],
       "id": "37978fb1-8539-4c98-a133-1ef6ca9cb59a",
       "name": "SerpAPI Search"
@@ -92,8 +92,8 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        -144,
-        -80
+        -176,
+        -208
       ],
       "id": "82076cda-ed28-478e-a04d-b27bb82a04a8",
       "name": "Generate HTML Report",
@@ -115,8 +115,8 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        416,
-        -80
+        384,
+        -208
       ],
       "id": "a193919b-4648-4205-90bd-52c07e7737ee",
       "name": "Convert to File"
@@ -128,8 +128,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1456,
-        -80
+        -1008,
+        160
       ],
       "id": "cc3727a1-b8de-4489-9f05-813218e75bb1",
       "name": "debugforslack"
@@ -151,8 +151,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -592,
-        -80
+        -624,
+        -208
       ],
       "id": "5736d95c-711d-4f5a-96d0-9a1cda7028f1",
       "name": "Input question from slack"
@@ -164,8 +164,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -768,
-        -80
+        -800,
+        -208
       ],
       "id": "f3e27b6e-900b-4806-b453-f336790d81cf",
       "name": "stop here if it bot run"
@@ -177,8 +177,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        208,
-        -80
+        176,
+        -208
       ],
       "id": "fbcd92c9-70ea-4758-94db-04e1fc696853",
       "name": "generate HTML Report"
@@ -190,8 +190,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
-        -80
+        592,
+        -208
       ],
       "id": "78eafc33-99a8-494e-895d-d75a64261a86",
       "name": "Input for google Drive"
@@ -203,8 +203,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        832,
-        -80
+        816,
+        -96
       ],
       "id": "05c2b480-4b56-49d3-a789-7ff112bef814",
       "name": "debug if fails b4 drive"
@@ -227,8 +227,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1040,
-        -80
+        1088,
+        -96
       ],
       "id": "47e04d74-2332-44c0-834d-18b5bc58c86b",
       "name": "Google Drive  HTML file upload",
@@ -246,8 +246,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1248,
-        -80
+        1424,
+        -96
       ],
       "id": "88acdd42-eaed-45fa-ab23-aba7c2cc6525",
       "name": "generate information for Slack"
@@ -267,8 +267,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.4,
       "position": [
-        1664,
-        -80
+        -816,
+        304
       ],
       "id": "a7d7dea3-0f20-4a5e-afa3-c30eee85aad5",
       "name": "Slack- Final output with download option",
@@ -279,9 +279,60 @@
           "name": "NewsletterBot"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the data from your Slack preparation node\nconst inputData = $input.first().json;\n\n// Get Google Drive data from the upload node\nlet googleDriveData = {};\ntry {\n    // Use the exact name of your Google Drive node\n    googleDriveData = $node['Google Drive HTML file upload'].json || {};\n    console.log('✅ Successfully got Google Drive data');\n} catch (error) {\n    console.log('⚠️ Could not get Google Drive node data, using input data instead');\n}\n\n// Log what we're working with (for debugging)\nconsole.log('Input data keys:', Object.keys(inputData));\nconsole.log('Google Drive keys:', Object.keys(googleDriveData));\n\n// CRITICAL: Get the file ID - this is the most important part\n// First try from Google Drive node, then from input data\nconst fileId = googleDriveData.id || inputData.id || '';\n\n// Get filename - try multiple possible field names\nconst filename = googleDriveData.originalFilename || \n                 googleDriveData.name || \n                 inputData.filename || \n                 'report.html';\n\n// Get file size and convert to KB\nconst fileSize = parseInt(googleDriveData.size || inputData.size || '0');\nconst sizeKB = (fileSize / 1024).toFixed(2);\n\n// Extract topic from filename (remove .html and replace hyphens with spaces)\nlet topic = filename\n    .replace('.html', '')\n    .replace(/-/g, ' ')\n    .split(' ')\n    .map(word => word.charAt(0).toUpperCase() + word.slice(1))\n    .join(' ');\n\n// If topic is empty, use a default\nif (!topic || topic === ' ') {\n    topic = 'HTML Report';\n}\n\n// Construct working Google Drive links\nconst viewLink = fileId ? `https://drive.google.com/file/d/${fileId}/view?usp=sharing` : '#';\nconst downloadLink = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}&confirm=t` : '#';\n\n// Get current date and time\nconst now = new Date();\nconst dateStr = now.toLocaleDateString('en-US', { \n    year: 'numeric', \n    month: 'long', \n    day: 'numeric' \n});\n\n// Create beautifully formatted HTML email\nconst emailHtml = `<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>HTML Report: ${topic}</title>\n    <style>\n        body {\n            margin: 0;\n            padding: 0;\n            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\n            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n            min-height: 100vh;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            padding: 20px;\n        }\n        .email-card {\n            max-width: 500px;\n            width: 100%;\n            background: white;\n            border-radius: 24px;\n            overflow: hidden;\n            box-shadow: 0 20px 60px rgba(0,0,0,0.3);\n            animation: slideIn 0.5s ease-out;\n        }\n        @keyframes slideIn {\n            from { transform: translateY(30px); opacity: 0; }\n            to { transform: translateY(0); opacity: 1; }\n        }\n        .header {\n            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n            padding: 40px 30px;\n            text-align: center;\n        }\n        .header h1 {\n            color: white;\n            margin: 0;\n            font-size: 28px;\n            font-weight: 600;\n            letter-spacing: -0.5px;\n        }\n        .header p {\n            color: rgba(255,255,255,0.9);\n            margin: 10px 0 0;\n            font-size: 16px;\n        }\n        .content {\n            padding: 30px;\n        }\n        .info-box {\n            background: #f8fafc;\n            border-radius: 16px;\n            padding: 20px;\n            margin-bottom: 25px;\n            border: 1px solid #e2e8f0;\n        }\n        .info-row {\n            display: flex;\n            align-items: center;\n            padding: 8px 0;\n            border-bottom: 1px solid #edf2f7;\n        }\n        .info-row:last-child {\n            border-bottom: none;\n        }\n        .info-label {\n            width: 80px;\n            font-weight: 600;\n            color: #4a5568;\n        }\n        .info-value {\n            flex: 1;\n            color: #2d3748;\n            word-break: break-word;\n        }\n        .button-group {\n            display: flex;\n            gap: 15px;\n            margin: 25px 0;\n            flex-wrap: wrap;\n        }\n        .button {\n            flex: 1;\n            min-width: 200px;\n            padding: 14px 20px;\n            border-radius: 12px;\n            text-decoration: none;\n            font-weight: 600;\n            font-size: 16px;\n            text-align: center;\n            transition: all 0.3s ease;\n            display: inline-block;\n        }\n        .button-primary {\n            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n            color: white;\n            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);\n        }\n        .button-primary:hover {\n            transform: translateY(-2px);\n            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);\n        }\n        .button-secondary {\n            background: white;\n            color: #667eea;\n            border: 2px solid #667eea;\n        }\n        .button-secondary:hover {\n            background: #f0f4ff;\n            transform: translateY(-2px);\n        }\n        .footer {\n            background: #f8fafc;\n            padding: 20px;\n            text-align: center;\n            border-top: 1px solid #e2e8f0;\n            color: #718096;\n            font-size: 13px;\n        }\n        .fallback-links {\n            background: #f1f5f9;\n            border-radius: 8px;\n            padding: 15px;\n            margin-top: 20px;\n            font-size: 12px;\n            word-break: break-all;\n        }\n        .fallback-links a {\n            color: #667eea;\n            text-decoration: none;\n        }\n        .fallback-links a:hover {\n            text-decoration: underline;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"email-card\">\n        <div class=\"header\">\n            <h1>📊 HTML Report</h1>\n            <p>Your requested report is ready</p>\n        </div>\n        \n        <div class=\"content\">\n            <div class=\"info-box\">\n                <div class=\"info-row\">\n                    <span class=\"info-label\">Topic</span>\n                    <span class=\"info-value\"><strong>${topic}</strong></span>\n                </div>\n                <div class=\"info-row\">\n                    <span class=\"info-label\">File</span>\n                    <span class=\"info-value\">${filename}</span>\n                </div>\n                <div class=\"info-row\">\n                    <span class=\"info-label\">Size</span>\n                    <span class=\"info-value\">${sizeKB} KB</span>\n                </div>\n                <div class=\"info-row\">\n                    <span class=\"info-label\">Date</span>\n                    <span class=\"info-value\">${dateStr}</span>\n                </div>\n            </div>\n            \n            <div class=\"button-group\">\n                <a href=\"${viewLink}\" class=\"button button-primary\" target=\"_blank\">📄 View in Drive</a>\n                <a href=\"${downloadLink}\" class=\"button button-secondary\" target=\"_blank\">📥 Download</a>\n            </div>\n            \n            <div class=\"fallback-links\">\n                <p style=\"margin:0 0 8px; color:#4a5568;\"><strong>🔗 Direct links:</strong></p>\n                <p style=\"margin:5px 0;\">📄 View: <a href=\"${viewLink}\">${viewLink}</a></p>\n                <p style=\"margin:5px 0;\">📥 Download: <a href=\"${downloadLink}\">${downloadLink}</a></p>\n            </div>\n        </div>\n        \n        <div class=\"footer\">\n            <p style=\"margin:0;\">✨ Generated by n8n automation</p>\n            <p style=\"margin:5px 0 0; font-size:11px;\">File saved in Google Drive folder: Slack</p>\n        </div>\n    </div>\n</body>\n</html>`;\n\n// Return properly formatted data for Gmail node\nreturn [{\n    json: {\n        to: 'selva.ai.solutions@gmail.com',\n        subject: `📊 HTML Report: ${topic} - ${dateStr}`,\n        html: emailHtml,  // Make sure this field is named 'html'\n        // Also include plain text version for email clients that don't support HTML\n        text: `HTML Report: ${topic}\\n\\nFile: ${filename}\\nSize: ${sizeKB} KB\\n\\nView: ${viewLink}\\nDownload: ${downloadLink}`,\n        // Pass through data\n        viewLink: viewLink,\n        downloadLink: downloadLink,\n        filename: filename,\n        topic: topic\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        304
+      ],
+      "id": "0f00a113-5649-4c79-92b6-75d21e7e1510",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "selva.ai.solutions@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -400,
+        304
+      ],
+      "id": "eb3220a1-082d-4c46-bae7-a35eacdee2e9",
+      "name": "Send a message",
+      "webhookId": "8b416847-a9d1-4041-ab98-ca32325c2d91",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "HITG37yeTWpG7bKh",
+          "name": "Gmail account"
+        }
+      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Code in JavaScript": [
+      {
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2
+        }
+      }
+    ]
+  },
   "connections": {
     "Slack Trigger": {
       "main": [
@@ -414,6 +465,28 @@
           }
         ]
       ]
+    },
+    "Slack- Final output with download option": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -422,7 +495,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "8838f39c-913e-4cfb-b299-5bb826fd52f6",
+  "versionId": "f377a4b5-3872-40e4-903f-f08bb38c5175",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "6681a547bda1dc5a14e58187dabeb4ef3bc204b4006a1b2aab47879456c3722d"
